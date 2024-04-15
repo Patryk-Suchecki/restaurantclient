@@ -1,81 +1,50 @@
-import './App.css';
-import { jwtDecode } from 'jwt-decode';
 import React, { useState } from 'react';
-
-const TokenStorage = () => {
-  const [token, setToken] = useState('');
-
-  const setJWTToken = (newToken) => {
-    setToken(newToken);
-  };
-
-  const clearJWTToken = () => {
-    setToken('');
-  };
-
-  return {
-    token,
-    setJWTToken,
-    clearJWTToken,
-  };
-};
-
-const Login = ({ tokenStorage }) => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-
-  const handleLogin = async () => {
-    try {
-      const response = await fetch('http://localhost:5000/api/account/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, password }),
-      });
-
-      if (response.ok) {
-        const token = await response.text(); // Odczytujemy token jako tekst
-        tokenStorage.setJWTToken(token);
-
-        // Dekodowanie tokena po ustawieniu
-        const decoded = jwtDecode(token);
-        console.log(decoded);
-      } else {
-        console.error('Błąd logowania');
-      }
-    } catch (error) {
-      console.error('Wystąpił błąd', error);
-    }
-  };
-
-  return (
-    <div>
-      <input
-        type="text"
-        placeholder="Email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-      />
-      <input
-        type="password"
-        placeholder="Password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-      />
-      <button onClick={handleLogin}>Login</button>
-    </div>
-  );
-};
+import './App.css';
+import TokenStorage from './TokenStorage';
+import { BrowserRouter as Router, Route, Routes} from 'react-router-dom';
+import Login from './Login';
+import Navbar from './Navbar';
+import Register from './Register';
+import SendRequest from './SendRequest';
+import RestaurantList from './RestaurantList';
+import RestaurantDetails from './RestaurantDetails';
 
 const App = () => {
   const tokenStorage = TokenStorage();
+  const isAuthenticated = !!tokenStorage.token;
+  const [restaurantData, setRestaurantData] = useState(null);
+
+  const handleRestaurantData = (data) => {
+    setRestaurantData(data);
+  };
+
+  const handleLogout = () => {
+    tokenStorage.clearJWTToken();
+  };
+
+  const updateRestaurantData = (data) => {
+    setRestaurantData(data);
+  };
 
   return (
-    <div>
-      <h1>Logowanie</h1>
-      <Login tokenStorage={tokenStorage} />
-    </div>
+    <Router>
+      <Navbar isAuthenticated={isAuthenticated} userEmail={tokenStorage.token} onLogout={handleLogout} />
+      <div>
+        <Routes>
+          <Route path="/" 
+            element={
+              <>
+                <SendRequest onRestaurantData={handleRestaurantData} />  
+                {restaurantData != null && <RestaurantList restaurants={restaurantData} />}
+              </>
+            }
+          />
+          <Route path="/login" element={<Login tokenStorage={tokenStorage} />} />
+          <Route path="/register" element={<Register tokenStorage={tokenStorage} />} />
+          <Route path="/restaurant/:restaurantId" element={<RestaurantDetails />} />
+        </Routes>
+      </div>
+    </Router>
   );
 };
 
