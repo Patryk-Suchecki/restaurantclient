@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-const CreateRestaurant = ({ jwtToken }) => {
+const CreateRestaurant = ({ tokenStorage }) => {
   const [formData, setFormData] = useState({
     name: '',
     description: '',
@@ -25,7 +25,7 @@ const CreateRestaurant = ({ jwtToken }) => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${jwtToken}`
+          'Authorization': `Bearer ${tokenStorage.token}`
         },
         body: JSON.stringify(formData)
       });
@@ -44,15 +44,15 @@ const CreateRestaurant = ({ jwtToken }) => {
     <div>
       <h2>Create Restaurant</h2>
       <form onSubmit={handleSubmit}>
-        <input type="text" name="name" placeholder="Name" value={formData.name} onChange={handleChange} />
-        <input type="text" name="description" placeholder="Description" value={formData.description} onChange={handleChange} />
-        <input type="text" name="category" placeholder="Category" value={formData.category} onChange={handleChange} />
-        <input type="number" name="deliveryDistance" placeholder="Delivery Distance" value={formData.deliveryDistance} onChange={handleChange} />
-        <input type="email" name="contactEmail" placeholder="Contact Email" value={formData.contactEmail} onChange={handleChange} />
-        <input type="tel" name="contactNumber" placeholder="Contact Number" value={formData.contactNumber} onChange={handleChange} />
-        <input type="text" name="city" placeholder="City" value={formData.city} onChange={handleChange} />
-        <input type="text" name="street" placeholder="Street" value={formData.street} onChange={handleChange} />
-        <input type="text" name="postalCode" placeholder="Postal Code" value={formData.postalCode} onChange={handleChange} />
+        <input type="text" name="name" placeholder="Name" value={formData.name} onChange={handleChange} required />
+        <input type="text" name="description" placeholder="Description" value={formData.description} onChange={handleChange} required />
+        <input type="text" name="category" placeholder="Category" value={formData.category} onChange={handleChange} required />
+        <input type="number" name="deliveryDistance" placeholder="Delivery Distance" value={formData.deliveryDistance} onChange={handleChange} required />
+        <input type="email" name="contactEmail" placeholder="Contact Email" value={formData.contactEmail} onChange={handleChange} required />
+        <input type="tel" name="contactNumber" placeholder="Contact Number" value={formData.contactNumber} onChange={handleChange} required />
+        <input type="text" name="city" placeholder="City" value={formData.city} onChange={handleChange} required />
+        <input type="text" name="street" placeholder="Street" value={formData.street} onChange={handleChange} required />
+        <input type="text" name="postalCode" placeholder="Postal Code" value={formData.postalCode} onChange={handleChange} required />
         <button type="submit">Create Restaurant</button>
       </form>
     </div>

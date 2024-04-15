@@ -14,6 +14,9 @@ const Navbar = ({ isAuthenticated, userEmail, onLogout }) => {
             <li>
               <button onClick={onLogout}>Wyloguj</button>
             </li>
+            <li>
+              <Link to="/own">Moje restauracje</Link>
+              </li>
           </>
         ) : (
           <>
