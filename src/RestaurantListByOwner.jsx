@@ -61,7 +61,7 @@ const RestaurantListByOwner = ({ tokenStorage }) => {
     }
   };
 
-  const handleDelete = async (restaurantId, id) => {
+  const handleDeleteDish = async (restaurantId, id) => {
     try {
       const response = await fetch(`http://localhost:5000/api/restaurant/${restaurantId}/dish/${id}`, {
         method: 'DELETE',
@@ -83,6 +83,33 @@ const RestaurantListByOwner = ({ tokenStorage }) => {
       console.error('Error:', error);
     }
   };
+
+  const handleDeleteRestaurant = async (restaurantId) => {
+    try {
+      const response = await fetch(`http://localhost:5000/api/restaurant/${restaurantId}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${tokenStorage.token}`
+        }
+      });
+
+      if (response.ok) {
+        setRestaurants(prevState => prevState.filter(restaurant => restaurant.id !== restaurantId));
+        // Usuwamy dania po usunięciu restauracji
+        setDishes(prevState => {
+          const newState = { ...prevState };
+          delete newState[restaurantId];
+          return newState;
+        });
+      } else {
+        console.error(`Failed to delete restaurant with id ${restaurantId}`);
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  };
+
   if (loading) {
     return <div>Loading...</div>;
   }
@@ -95,16 +122,16 @@ const RestaurantListByOwner = ({ tokenStorage }) => {
         <Card key={restaurant.id} sx={{ my: 2 }}>
           <CardContent>
             <Typography variant="h4">{restaurant.name}</Typography>
-            <Button onClick={() => handleDelete(restaurant.id)} variant="outlined" color="error">Usuń</Button>
+            <Button onClick={() => handleDeleteRestaurant(restaurant.id)} variant="outlined" color="error">Usuń</Button>
             <ul>
               {dishes[restaurant.id]?.map((dish) => (
                 <li key={dish.id}>
                   <Typography variant="h5">{dish.name}</Typography>
-                  <Button onClick={() => handleDelete(restaurant.id, dish.id)}>Delete</Button>
+                  <Button onClick={() => handleDeleteDish(restaurant.id, dish.id)}>Usuń</Button>
                 </li>
               ))}
             </ul>
-              <Button sx={{marginTop: 1}}variant="contained" component={Link} to={`/restaurant/${restaurant.id}/dish`}>Dodaj danie</Button>
+            <Button sx={{ marginTop: 1 }} variant="contained" component={Link} to={`/restaurant/${restaurant.id}/dish`}>Dodaj danie</Button>
           </CardContent>
         </Card>
       ))}

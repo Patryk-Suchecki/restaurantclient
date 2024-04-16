@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
 import { Typography, TextField, Button, Box } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 
 const CreateRestaurant = ({ tokenStorage }) => {
+  const navigate = useNavigate();
+
   const [formData, setFormData] = useState({
     name: '',
     description: '',
@@ -33,6 +36,7 @@ const CreateRestaurant = ({ tokenStorage }) => {
 
       if (response.ok) {
         console.log('Restaurant created successfully');
+        navigate(-1);
       } else {
         console.error('Failed to create restaurant');
       }
