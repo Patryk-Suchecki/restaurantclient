@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { Typography, List, ListItem, ListItemText, Divider } from '@mui/material';
 
 const DishList = ({ restaurantId }) => {
   const [dishes, setDishes] = useState(null);
@@ -9,7 +10,6 @@ const DishList = ({ restaurantId }) => {
         const response = await fetch(`http://localhost:5000/api/restaurant/${restaurantId}/dish`);
         if (response.ok) {
           const data = await response.json();
-          console.log(data);
           setDishes(data);
         } else {
           console.error('Błąd podczas pobierania danych o daniach');
@@ -23,21 +23,31 @@ const DishList = ({ restaurantId }) => {
   }, [restaurantId]);
 
   if (!dishes) {
-    return <div>Loading...</div>;
+    return <Typography>Loading...</Typography>;
   }
 
   return (
     <div>
-      <h3>Dishes</h3>
-      <ul>
-        {dishes.map((dish) => (
-          <li key={dish.id}>
-            <h4>{dish.name}</h4>
-            <p>Description: {dish.description}</p>
-            <p>Price: {dish.price}</p>
-          </li>
+      <Typography variant="h4" gutterBottom>Menu</Typography>
+      <List>
+        {dishes.map((dish, index) => (
+          <React.Fragment key={dish.id}>
+            <ListItem>
+              <ListItemText
+                primary={dish.name}
+                secondary={
+                  <>
+                  <Typography variant="body1" component="span" sx={{marginRight: 3}}>Cena: {dish.price}</Typography>
+                    <Typography variant="body1" component="span">Opis: {dish.description}</Typography>
+                    
+                  </>
+                }
+              />
+            </ListItem>
+            {index !== dishes.length - 1 && <Divider />}
+          </React.Fragment>
         ))}
-      </ul>
+      </List>
     </div>
   );
 };

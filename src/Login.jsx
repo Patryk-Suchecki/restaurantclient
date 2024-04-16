@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
-import { jwtDecode } from 'jwt-decode';
+import Center from './Center';
+import { Card, CardContent, Typography, TextField, Button, Box } from "@mui/material";
+import { Navigate } from 'react-router-dom';
 
 const Login = ({ tokenStorage }) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [redirectToHome, setRedirectToHome] = useState(false);
   
     const handleLogin = async () => {
       try {
@@ -18,6 +21,7 @@ const Login = ({ tokenStorage }) => {
         if (response.ok) {
           const token = await response.text();
           tokenStorage.setJWTToken(token);
+          setRedirectToHome(true);
         } else {
           console.error('Błąd logowania');
         }
@@ -25,23 +29,48 @@ const Login = ({ tokenStorage }) => {
         console.error('Wystąpił błąd', error);
       }
     };
-  
+    if (redirectToHome) {
+      return <Navigate to="/" />;
+    }
     return (
-      <div>
-        <input
+      <Center>
+        <Card sx={{width : "30" }}>
+        <CardContent sx={{ textAlign: "center" }}>
+          <Typography variant="h4" sx={{my: 3}}>
+            Logowanie
+          </Typography>
+          <Box
+            sx={{
+              "& .MuiTextField-root": {
+                margin: 2,
+                width: "90%",
+              },
+            }}
+          >
+        <TextField
           type="text"
           placeholder="Email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
         />
-        <input
+        <TextField
           type="password"
           placeholder="Password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
-        <button onClick={handleLogin}>Login</button>
-      </div>
+        <Button
+          variant="contained"
+          size="large"
+          sx={{width: "30%"}}
+         onClick={handleLogin}
+         >
+          Zaloguj się
+          </Button>
+          </Box>
+        </CardContent>
+        </Card>
+      </Center>
     );
   };
   export default Login;

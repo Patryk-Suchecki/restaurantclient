@@ -1,10 +1,14 @@
 import React, { useState } from 'react';
+import { Card, CardContent, Typography, TextField, Button, Box } from "@mui/material";
+import Center from "./Center";
+import { Navigate } from 'react-router-dom';
 
 const Register = ({ tokenStorage }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [nationality, setNationality] = useState('');
+  const [redirectToHome, setRedirectToHome] = useState(false);
 
   const handleRegister = async () => {
     try {
@@ -24,6 +28,7 @@ const Register = ({ tokenStorage }) => {
       if (response.ok) {
         const token = await response.text();
         tokenStorage.setJWTToken(token);
+        setRedirectToHome(true);
       } else {
         console.error('Błąd rejestracji');
       }
@@ -31,35 +36,60 @@ const Register = ({ tokenStorage }) => {
       console.error('Wystąpił błąd', error);
     }
   };
+  if (redirectToHome) {
+    return <Navigate to="/login" />;
+  }
 
   return (
-    <div>
-      <input
+      <Center>
+        <Card sx={{width : "30" }}>
+        <CardContent sx={{ textAlign: "center" }}>
+          <Typography variant="h4" sx={{my: 3}}>
+            Rejestracja
+          </Typography>
+          <Box
+            sx={{
+              "& .MuiTextField-root": {
+                margin: 1,
+                width: "90%",
+              },
+            }}
+          >
+      <TextField
         type="text"
         placeholder="Email"
         value={email}
         onChange={(e) => setEmail(e.target.value)}
       />
-      <input
+      <TextField
         type="password"
         placeholder="Password"
         value={password}
         onChange={(e) => setPassword(e.target.value)}
       />
-      <input
+      <TextField
         type="password"
         placeholder="Confirm Password"
         value={confirmPassword}
         onChange={(e) => setConfirmPassword(e.target.value)}
       />
-      <input
+      <TextField
         type="text"
         placeholder="Nationality"
         value={nationality}
         onChange={(e) => setNationality(e.target.value)}
       />
-      <button onClick={handleRegister}>Register</button>
-    </div>
+      <Button variant="contained"
+          size="large"
+          sx={{width: "20%"}} 
+          onClick={handleRegister}
+          >
+            Zarejestruj się
+            </Button>
+    </Box>
+    </CardContent>
+        </Card>
+      </Center>
   );
 };
 

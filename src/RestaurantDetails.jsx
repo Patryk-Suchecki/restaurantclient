@@ -1,8 +1,7 @@
-// RestaurantDetails.jsx
-
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import DishList from './DishList';
+import { Typography, Box, Paper } from '@mui/material';
 
 const RestaurantDetails = () => {
   const { restaurantId } = useParams();
@@ -31,15 +30,16 @@ const RestaurantDetails = () => {
   }
 
   return (
-    <div>
-      <h2>{restaurant.name}</h2>
-      <p>Description: {restaurant.description}</p>
-      <p>Category: {restaurant.category}</p>
-      <p>Delivery Distance: {restaurant.deliveryDistance} km</p>
-      <p>Address: {restaurant.street}, {restaurant.postalCode} {restaurant.city}</p>
-      
+    <Box sx={{ m: 2 }}>
+      <Typography variant="h2" gutterBottom>{restaurant.name}</Typography>
+      <Paper elevation={3} sx={{ p: 2, mb: 2 }}>
+        <Typography variant="body1" gutterBottom sx={{marginBottom: 3}}>{restaurant.description}</Typography>
+        <Typography variant="body1" gutterBottom><i>Kategoria:</i> {restaurant.category}</Typography>
+        <Typography variant="body1" gutterBottom><i>Odległość dostawy:</i> {restaurant.deliveryDistance} km</Typography>
+        <Typography variant="body1" gutterBottom><i>Adres:</i> {restaurant.street}, {restaurant.postalCode} {restaurant.city}</Typography>
+      </Paper>
       <DishList restaurantId={restaurantId} />
-    </div>
+    </Box>
   );
 };
 

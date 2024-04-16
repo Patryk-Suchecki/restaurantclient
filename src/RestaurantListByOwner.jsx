@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
+import { Button, Card, CardContent, Divider, Typography } from '@mui/material';
 
 const RestaurantListByOwner = ({ tokenStorage }) => {
   const [restaurants, setRestaurants] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [editMode, setEditMode] = useState({});
-  const [updatedData, setUpdatedData] = useState({});
   const [dishes, setDishes] = useState({});
-  const [newDish, setNewDish] = useState({});
 
   useEffect(() => {
     const fetchRestaurantsByOwner = async () => {
@@ -84,154 +83,32 @@ const RestaurantListByOwner = ({ tokenStorage }) => {
       console.error('Error:', error);
     }
   };
-
-  const handleUpdate = async (restaurantId, id, newData) => {
-    try {
-      const response = await fetch(`http://localhost:5000/api/restaurant/${restaurantId}/dish/${id}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${tokenStorage.token}`
-        },
-        body: JSON.stringify(newData)
-      });
-
-      if (response.ok) {
-        const updatedDishes = dishes[restaurantId].map(dish => {
-          if (dish.id === id) {
-            return { ...dish, ...newData };
-          }
-          return dish;
-        });
-        setDishes(prevState => ({
-          ...prevState,
-          [restaurantId]: updatedDishes
-        }));
-      } else {
-        console.error(`Failed to update dish with id ${id}`);
-      }
-    } catch (error) {
-      console.error('Error:', error);
-    }
-  };
-
-  const handleAdd = async (restaurantId, newData) => {
-    try {
-      const response = await fetch(`http://localhost:5000/api/restaurant/${restaurantId}/dish`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${tokenStorage.token}`
-        },
-        body: JSON.stringify(newData)
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        setDishes(prevState => ({
-          ...prevState,
-          [restaurantId]: [...prevState[restaurantId], data]
-        }));
-      } else {
-        console.error(`Failed to add dish for restaurant with id ${restaurantId}`);
-      }
-    } catch (error) {
-      console.error('Error:', error);
-    }
-  };
-
   if (loading) {
     return <div>Loading...</div>;
   }
 
   return (
     <div>
-      <h2>My Restaurants</h2>
-      <ul>
-        {restaurants.map((restaurant) => (
-          <li key={restaurant.id}>
-            <h3>{restaurant.name}</h3>
-            <button onClick={() => handleDelete(restaurant.id)}>Delete</button>
-            <button onClick={() => setEditMode(prevState => ({ ...prevState, [restaurant.id]: true }))}>Edit</button>
-            {editMode[restaurant.id] && (
-              <div>
-                <input
-                  type="text"
-                  placeholder="New Name"
-                  value={updatedData[restaurant.id]?.name || ''}
-                  onChange={(e) => setUpdatedData({ ...updatedData, [restaurant.id]: { ...updatedData[restaurant.id], name: e.target.value } })}
-                />
-                <input
-                  type="text"
-                  placeholder="New Description"
-                  value={updatedData[restaurant.id]?.description || ''}
-                  onChange={(e) => setUpdatedData({ ...updatedData, [restaurant.id]: { ...updatedData[restaurant.id], description: e.target.value } })}
-                />
-                <input
-                  type="number"
-                  placeholder="New Delivery Distance"
-                  value={updatedData[restaurant.id]?.deliveryDistance || ''}
-                  onChange={(e) => setUpdatedData({ ...updatedData, [restaurant.id]: { ...updatedData[restaurant.id], deliveryDistance: e.target.value } })}
-                />
-                <button onClick={() => handleUpdate(restaurant.id, updatedData[restaurant.id])}>Save</button>
-              </div>
-            )}
+      <Typography variant="h3">Twoje restauracje</Typography>
+      <Divider />
+      {restaurants.map((restaurant) => (
+        <Card key={restaurant.id} sx={{ my: 2 }}>
+          <CardContent>
+            <Typography variant="h4">{restaurant.name}</Typography>
+            <Button onClick={() => handleDelete(restaurant.id)} variant="outlined" color="error">Usuń</Button>
             <ul>
               {dishes[restaurant.id]?.map((dish) => (
                 <li key={dish.id}>
-                  <h4>{dish.name}</h4>
-                  <button onClick={() => handleDelete(restaurant.id, dish.id)}>Delete</button>
-                  <button onClick={() => setEditMode(prevState => ({ ...prevState, [dish.id]: true }))}>Edit</button>
-                  {editMode[dish.id] && (
-                    <div>
-                      <input
-                        type="text"
-                        placeholder="New Name"
-                        value={updatedData[dish.id]?.name || ''}
-                        onChange={(e) => setUpdatedData({ ...updatedData, [dish.id]: { ...updatedData[dish.id], name: e.target.value } })}
-                      />
-                      <input
-                        type="text"
-                        placeholder="New Description"
-                        value={updatedData[dish.id]?.description || ''}
-                        onChange={(e) => setUpdatedData({ ...updatedData, [dish.id]: { ...updatedData[dish.id], description: e.target.value } })}
-                      />
-                      <input
-                        type="number"
-                        placeholder="New Price"
-                        value={updatedData[dish.id]?.price || ''}
-                        onChange={(e) => setUpdatedData({ ...updatedData, [dish.id]: { ...updatedData[dish.id], price: e.target.value } })}
-                      />
-                      <button onClick={() => handleUpdate(restaurant.id, dish.id, updatedData[dish.id])}>Save</button>
-                    </div>
-                  )}
+                  <Typography variant="h5">{dish.name}</Typography>
+                  <Button onClick={() => handleDelete(restaurant.id, dish.id)}>Delete</Button>
                 </li>
               ))}
             </ul>
-            <div>
-              <input
-                type="text"
-                placeholder="Name"
-                value={newDish[restaurant.id]?.name || ''}
-                onChange={(e) => setNewDish({ ...newDish, [restaurant.id]: { ...newDish[restaurant.id], name: e.target.value } })}
-              />
-              <input
-                type="text"
-                placeholder="Description"
-                value={newDish[restaurant.id]?.description || ''}
-                onChange={(e) => setNewDish({ ...newDish, [restaurant.id]: { ...newDish[restaurant.id], description: e.target.value } })}
-              />
-              <input
-                type="number"
-                placeholder="Price"
-                value={newDish[restaurant.id]?.price || ''}
-                onChange={(e) => setNewDish({ ...newDish, [restaurant.id]: { ...newDish[restaurant.id], price: e.target.value } })}
-              />
-              <button onClick={() => handleAdd(restaurant.id, newDish[restaurant.id])}>Add</button>
-            </div>
-          </li>
-        ))}
-      </ul>
+              <Button sx={{marginTop: 1}}variant="contained" component={Link} to={`/restaurant/${restaurant.id}/dish`}>Dodaj danie</Button>
+          </CardContent>
+        </Card>
+      ))}
+      <Button variant="outlined"><Link to="/restaurant">Dodaj restaurację</Link></Button>
     </div>
   );
 };

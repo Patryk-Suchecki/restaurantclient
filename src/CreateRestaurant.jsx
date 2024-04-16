@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Typography, TextField, Button, Box } from '@mui/material';
 
 const CreateRestaurant = ({ tokenStorage }) => {
   const [formData, setFormData] = useState({
@@ -41,21 +42,113 @@ const CreateRestaurant = ({ tokenStorage }) => {
   };
 
   return (
-    <div>
-      <h2>Create Restaurant</h2>
+    <Box sx={{ maxWidth: 400, margin: 'auto' }}>
+      <Typography variant="h3" gutterBottom sx={{marginTop: 3}}>Dodaj restaurację</Typography>
       <form onSubmit={handleSubmit}>
-        <input type="text" name="name" placeholder="Name" value={formData.name} onChange={handleChange} required />
-        <input type="text" name="description" placeholder="Description" value={formData.description} onChange={handleChange} required />
-        <input type="text" name="category" placeholder="Category" value={formData.category} onChange={handleChange} required />
-        <input type="number" name="deliveryDistance" placeholder="Delivery Distance" value={formData.deliveryDistance} onChange={handleChange} required />
-        <input type="email" name="contactEmail" placeholder="Contact Email" value={formData.contactEmail} onChange={handleChange} required />
-        <input type="tel" name="contactNumber" placeholder="Contact Number" value={formData.contactNumber} onChange={handleChange} required />
-        <input type="text" name="city" placeholder="City" value={formData.city} onChange={handleChange} required />
-        <input type="text" name="street" placeholder="Street" value={formData.street} onChange={handleChange} required />
-        <input type="text" name="postalCode" placeholder="Postal Code" value={formData.postalCode} onChange={handleChange} required />
-        <button type="submit">Create Restaurant</button>
+        <TextField
+          fullWidth
+          variant="outlined"
+          margin="normal"
+          type="text"
+          name="name"
+          label="Name"
+          value={formData.name}
+          onChange={handleChange}
+          required
+        />
+        <TextField
+          fullWidth
+          variant="outlined"
+          margin="normal"
+          type="text"
+          name="description"
+          label="Description"
+          value={formData.description}
+          onChange={handleChange}
+          required
+        />
+        <TextField
+          fullWidth
+          variant="outlined"
+          margin="normal"
+          type="text"
+          name="category"
+          label="Category"
+          value={formData.category}
+          onChange={handleChange}
+          required
+        />
+        <TextField
+          fullWidth
+          variant="outlined"
+          margin="normal"
+          type="number"
+          name="deliveryDistance"
+          label="Delivery Distance"
+          value={formData.deliveryDistance}
+          onChange={handleChange}
+          required
+        />
+        <TextField
+          fullWidth
+          variant="outlined"
+          margin="normal"
+          type="email"
+          name="contactEmail"
+          label="Contact Email"
+          value={formData.contactEmail}
+          onChange={handleChange}
+          required
+        />
+        <TextField
+          fullWidth
+          variant="outlined"
+          margin="normal"
+          type="tel"
+          name="contactNumber"
+          label="Contact Number"
+          value={formData.contactNumber}
+          onChange={handleChange}
+          required
+        />
+        <TextField
+          fullWidth
+          variant="outlined"
+          margin="normal"
+          type="text"
+          name="city"
+          label="City"
+          value={formData.city}
+          onChange={handleChange}
+          required
+        />
+        <TextField
+          fullWidth
+          variant="outlined"
+          margin="normal"
+          type="text"
+          name="street"
+          label="Street"
+          value={formData.street}
+          onChange={handleChange}
+          required
+        />
+        <TextField
+          fullWidth
+          variant="outlined"
+          margin="normal"
+          type="text"
+          name="postalCode"
+          label="Postal Code"
+          value={formData.postalCode}
+          onChange={handleChange}
+          required
+        />
+        <Box sx={{ textAlign: 'center' }}>
+          <Button type="submit" variant="contained" color="primary" size='large'>Dodaj</Button>
+        </Box>
       </form>
-    </div>
+    </Box>
   );
 };
 

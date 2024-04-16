@@ -1,23 +1,21 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { Typography, List, ListItem, ListItemText, Divider, Card } from '@mui/material';
 
 const RestaurantList = ({ restaurants }) => {
   return (
-    <div>
-      <h2>Restaurants</h2>
-      <ul>
+    <Card>
+      <List>
         {restaurants.items.map((restaurant) => (
-          <li key={restaurant.id}>
-            <Link to={`/restaurant/${restaurant.id}`}>
-              <h3>{restaurant.name}</h3>
-            </Link>
-            <p>Category: {restaurant.category}</p>
-          </li>
+          <React.Fragment key={restaurant.id}>
+            <ListItem component={Link} to={`/restaurant/${restaurant.id}`}>
+              <ListItemText primary={restaurant.name} secondary={`Category: ${restaurant.category}`} />
+            </ListItem>
+            <Divider />
+          </React.Fragment>
         ))}
-      </ul>
-      <p>Total Pages: {restaurants.totalPages}</p>
-      <p>Total Items Count: {restaurants.totalItemsCount}</p>
-    </div>
+      </List>
+    </Card>
   );
 };
 

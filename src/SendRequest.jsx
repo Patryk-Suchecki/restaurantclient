@@ -1,16 +1,22 @@
 import React, { useState } from 'react';
+import { Card, Box, Pagination, CardContent, TextField, Button, Typography, Select, MenuItem, CircularProgress } from '@mui/material';
+import Center from './Center';
+import RestaurantList from './RestaurantList';
 
-const SendRequest = ({ onRestaurantData }) => {
+const SendRequest = () => {
   const [pageSize, setPageSize] = useState(10);
   const [pageNumber, setPageNumber] = useState(1);
   const [sortDirection, setSortDirection] = useState('DESC');
   const [city, setCity] = useState('Katowice');
   const [street, setStreet] = useState('Mikołowska 1');
   const [house, setHouse] = useState('10');
-  const [apartment, setApartment] = useState('1');
   const [postalCode, setPostalCode] = useState('40-800');
+  const [restaurantData, setRestaurantData] = useState(null);
+  const [loading, setLoading] = useState(false); // Dodajemy stan loading
 
   const handleSendRequest = async () => {
+    setRestaurantData(null);
+    setLoading(true); // Ustawiamy stan loading na true
     try {
       const requestData = {
         PageSize: pageSize,
@@ -20,7 +26,7 @@ const SendRequest = ({ onRestaurantData }) => {
           City: city,
           Street: street,
           House: house,
-          Apartment: apartment,
+          Apartment: 1,
           PostalCode: postalCode
         }
       };
@@ -35,76 +41,93 @@ const SendRequest = ({ onRestaurantData }) => {
 
       if (response.ok) {
         const data = await response.json();
-        onRestaurantData(data); // Przekazujemy dane do komponentu nadrzędnego
+        setRestaurantData(data);
       } else {
         console.error('Błąd podczas wysyłania żądania');
       }
     } catch (error) {
       console.error('Wystąpił błąd', error);
+    } finally {
+      setLoading(false); // Ustawiamy stan loading z powrotem na false, gdy żądanie zostało zakończone
     }
   };
 
   const handleLocationClick = () => {
-    setCity('Katowice');
-    setStreet('Mikołowska 1');
-    setHouse('10');
-    setApartment('1');
-    setPostalCode('40-800');
+    setCity('Chorzów');
+    setStreet('Opolska');
+    setHouse('19');
+    setPostalCode('41-500');
   };
-
+  const handlePageChange = (value) => {
+    setPageNumber(value);
+    handleSendRequest();
+  };
   return (
-    <div>
-      <input
-        type="number"
-        placeholder="PageSize"
-        value={pageSize}
-        onChange={(e) => setPageSize(e.target.value)}
-      />
-      <input
-        type="number"
-        placeholder="PageNumber"
-        value={pageNumber}
-        onChange={(e) => setPageNumber(e.target.value)}
-      />
-      <input
-        type="text"
-        placeholder="Sort Direction"
-        value={sortDirection}
-        onChange={(e) => setSortDirection(e.target.value)}
-      />
-      <input
+    <Box>
+      <Typography variant='h4' sx={{textAlign: "center", marginTop: 3}}>Znajdź restuaracje w pobliżu</Typography>
+      <Card sx={{ marginX: "15%"}}>    
+      <CardContent sx={{ textAlign: "center" }}>      
+      <TextField
         type="text"
         placeholder="City"
         value={city}
         onChange={(e) => setCity(e.target.value)}
       />
-      <input
+      <TextField
         type="text"
         placeholder="Street"
         value={street}
         onChange={(e) => setStreet(e.target.value)}
       />
-      <input
+      <TextField
         type="text"
         placeholder="House"
         value={house}
         onChange={(e) => setHouse(e.target.value)}
       />
-      <input
-        type="text"
-        placeholder="Apartment"
-        value={apartment}
-        onChange={(e) => setApartment(e.target.value)}
-      />
-      <input
+      <TextField
         type="text"
         placeholder="PostalCode"
         value={postalCode}
         onChange={(e) => setPostalCode(e.target.value)}
+        sx={{marginRight: 10}}
       />
-      <button onClick={handleLocationClick}>Pobierz lokalizację</button>
-      <button onClick={handleSendRequest}>Send Request</button>
-    </div>
+
+            <Select type="text"
+        placeholder="Sort Direction"
+        value={sortDirection}
+        onChange={(e) => setSortDirection(e.target.value)}>
+          <MenuItem value="DESC">Alfabetycznie malejąco</MenuItem>
+          <MenuItem value="ASC">Alfabetycznie rosnąco</MenuItem>
+      </Select>
+      <Select
+        type="number"
+        placeholder="PageSize"
+        value={pageSize}
+        onChange={(e) => setPageSize(e.target.value)}>
+          <MenuItem value={10}>10</MenuItem>
+          <MenuItem value={25}>25</MenuItem>
+          <MenuItem value={50}>50</MenuItem>
+      </Select>
+      
+      </CardContent>
+      <CardContent sx={{ textAlign: "center" }}>
+      <Button variant="outlined" onClick={handleLocationClick}>Pobierz lokalizację</Button>
+      </CardContent>
+      <CardContent sx={{ textAlign: "center" }}>
+      <Button variant="contained" onClick={handleSendRequest}>Wyszukaj</Button>
+      </CardContent>
+      </Card>
+      {loading ? (
+        <Box sx={{ display: 'flex', justifyContent: 'center', marginTop: 2 }}>
+          <CircularProgress />
+        </Box>
+      ) : (
+        restaurantData != null && <RestaurantList restaurants={restaurantData} />
+      )}
+      <Pagination count={restaurantData  != null ? (restaurantData.totalPages) : (1) } variant='outlined' onChange={handlePageChange}/>
+      
+    </Box>
   );
 };
 
